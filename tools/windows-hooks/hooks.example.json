@@ -1,0 +1,123 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ],
+        "matcher": "^(?:(?:functions\\.)?(?:apply_patch|Bash|shell|shell_command|exec_command))$"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ],
+        "matcher": "^(?:(?:functions\\.)?(?:apply_patch|Bash|shell|shell_command|exec_command))$"
+      }
+    ],
+    "PostModelRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "true",
+            "commandWindows": "\"C:\\Python312\\python.exe\" \"C:\\Users\\YOUR_USER\\.codex\\hooks\\prompt_spider_sender.py\"",
+            "timeout": 3,
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}
