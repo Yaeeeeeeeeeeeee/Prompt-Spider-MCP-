@@ -17,3 +17,17 @@ The preview URL uses `/?session=<id>` with no credential. Browser access remains
 `spider_create_session` also accepts an optional `context` object: `source` (`windows` or `cloud`), `project_id`, `run_id`, `node_id` (producer IDs of 1–80 letters, digits, `_` or `-`, hashed before storage by default), and `simulated` (boolean). Session ID arguments must be actual UUIDs returned by create/import. Context is persisted separately from upstream replay data and remains attached across clients. Source defaults to `unknown`; the service never guesses a producer from network origin. Summaries expose `context`, declared `source`, original upstream `session_kind` (`agent` or `replay`), `last_received_at` (server receive time), and `connection_status`. Live sessions become `disconnected` after 60 seconds without an accepted mutation, and `timed_out` after five minutes. Terminal sessions are `inactive`. These derived connection values never complete a live session or claim success. Playback mutations count as server activity; reads do not refresh activity.
 
 The Worker verifies either its static MCP credential or configured OAuth access token before passing `{authenticated:true}` to `handleMcp`. Calling that function directly without this option retains its static-token authentication check. This trust option is an internal routing contract, never a request parameter. Tool failures return fixed safe validation messages or a generic failure message; raw database exceptions and paths are not sent to clients.
+
+## Client connection after actual deployment
+
+Codex CLI supports a remote Streamable HTTP registration (checked with this environment's `codex mcp add --help`):
+
+```sh
+codex mcp add prompt-spider-cloud --url https://YOUR-DEPLOYED-HOST/mcp --bearer-token-env-var MCP_AUTH_TOKEN
+```
+
+Replace the host with the real deployed endpoint, and securely configure the independent MCP token in the CLI process environment. Do not put its value in the command, URL, repository or chat. Adding a new MCP registration is additive; inspect an existing registration with the same name before replacing it. This command has not been executed against a production endpoint here.
+
+For ChatGPT, use the actual deployed `/mcp` URL in an account/workspace that supports remote MCP connectors and choose OAuth. Configure the exact callback supplied by that product before authorization; approve in the Worker's password form. The live account login and callback have not been tested.
+
+Codex Web/cloud tasks also require the product to support and expose the remote connector to that task. A `.codex/config.toml` file, environment variable, Skill or AGENTS instruction cannot by itself inject a new tool into the platform's available-tool list. No global connector or automatic activation across all cloud projects is claimed. Where the platform does not provide the MCP connection, the optional explicitly authorized HTTPS reporter is a separate best-effort fallback, not a real MCP-tool invocation.
