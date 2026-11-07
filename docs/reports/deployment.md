@@ -1,0 +1,13 @@
+# Deployment evidence and limits
+
+No production mutation or deployment was performed. Cloudflare credentials are unavailable in this session, so no real Worker/D1 backup, production migration, version deployment, rollback or remote smoke is claimed. A prior read-only production health attempt was blocked by the environment proxy with HTTP 403; that is not evidence of application health or failure.
+
+Usable artifacts: guarded `scripts/cloud.py`, SDK HTTPS Streamable HTTP `scripts/smoke.mjs`, Python guard tests and deployment instructions. Thirteen guard tests passed via `python3 scripts/test_cloud.py` (actual additive migrations, destructive SQL rejection, token independence, old Worker target rejection, incomplete backup rejection, in-memory restore record/integrity validation, host filesystem attack rejection, reader/source credential requirements, verification-before-mutation and explicit first-deployment rollback guards). Remote smoke data is explicitly SIMULATED and is not native collector validation.
+
+Remaining production prerequisites: actual Cloudflare access and real D1 UUID, inspect original schema, complete and validate private legacy Worker/settings/version plus D1 export backup, apply additive migrations, deploy independent prompt-spider-mcp, and run authenticated smoke with every cross-role credential. Original history hashes are compared by the deployment runner. No private backups or secret values are committed.
+
+Review hardening: private backups now validate an actual isolated SQLite restore and record its schema/integrity and migration snapshot checksums. Deploy automatically requires build and full JavaScript/Python verification before remote mutations, uses nodejs_compat/date matching local Wrangler, and uploads an independent dashboard reader credential plus paired optional source credentials. First-deployment disabling requires explicit --disable-new and a matching successful deployment receipt. These safeguards were locally tested; production operations remain unexecuted.
+
+Shared-database schema checks now derive expected new table shapes from the actual migrations and compare existing column names/types/nullability/primary keys, including generic MCP/OAuth names. Original events must contain all four legacy columns. Added tests confirm first installation, compatible repeated migrations, conflicting tables/views and missing original columns.
+
+Final root hardening additionally requires at least32 characters for newly provided MCP/reader/source credentials; deployment guard suite now14 tests, all passed. This adds no actual production access or mutation.

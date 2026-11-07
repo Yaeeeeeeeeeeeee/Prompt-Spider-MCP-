@@ -1,0 +1,31 @@
+{
+  "name": "prompt-spider-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "build": "node build/build.mjs",
+    "test": "npm run build && node tests/run.mjs",
+    "test:python": "python3 -m unittest discover -s tools/windows-hooks -v",
+    "dev": "npm run build && wrangler dev --config wrangler.local.jsonc",
+    "check:deploy": "npm run build && wrangler deploy --dry-run --config wrangler.local.jsonc",
+    "test:browser": "npm run build && node tests/ui-browser.mjs",
+    "test:stdio": "node vendor/prompt-spider-ui/mcp/tests/protocol.test.mjs",
+    "test:cloud": "python3 -m unittest discover -s collectors/cloud -v",
+    "test:ops": "python3 scripts/test_cloud.py"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.3.1",
+    "esbuild": "0.28.2",
+    "miniflare": "4.20260730.0",
+    "playwright": "1.62.1",
+    "wrangler": "4.158.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.1",
+    "zod": "4.6.7"
+  }
+}

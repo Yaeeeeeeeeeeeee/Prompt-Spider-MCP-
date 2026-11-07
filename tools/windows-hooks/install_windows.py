@@ -151,7 +151,7 @@ def main():
     print('Existing config.toml:',(home/'config.toml').exists())
     print('Existing hooks directory:',(home/'hooks').exists())
     from prompt_spider_sender import get_token
-    print('SPIDER_INGEST_TOKEN:', 'present' if get_token() else 'missing')
+    print('SPIDER_WINDOWS_TOKEN:', 'present' if get_token() else 'missing')
     backup = install(home)
     print('Installed. Backup:',backup)
     print('No permission or trust settings changed. Review new hooks in Codex before use.')

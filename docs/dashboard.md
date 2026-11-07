@@ -1,0 +1,15 @@
+# Read-only activity dashboard
+
+Open the independent MCP Worker's root URL. Enter its `SPIDER_READ_TOKEN` in the password field and connect. The credential is retained only in JavaScript memory and sent through the Authorization header. Disconnect, authentication rejection and page reload clear it. Read access never invokes a mutation tool.
+
+The dashboard polls `/api/sessions` every five seconds. Select a session to load its full `/api/session?id=…` snapshot and `/api/replay?id=…` record. Filter by Windows/cloud/unknown source, project and node when supplied in session context. Source is context metadata, not an inference about the browser or transport. Explicitly simulated records display a visible SIMULATED badge on their cards and in selected detail metadata. The original STDIO server remains a separate fallback.
+
+The selected session shows last receipt time, actual event counts, expected total when configured, upstream status and connection status. The timeline displays recorded labels, routes, statuses and times using text nodes. Scrub historical replay in seconds to reconstruct earlier revisions (including event updates and explicit session completion); Play advances locally and Jump to latest resumes the latest recorded view. Playback changes never write to the server. Sessions that go missing from the open-session list clear the selection. Offline/error views retain the recorded display and clearly report read failure; authentication rejection clears the credential and display.
+
+The canvas uses the original MIT licensed `drawSpider` renderer, copied from the reviewed repository vendor. Live activity drives movement; offline, stale, waiting and terminal states freeze movement. Historical frames use recorded time and reconstructed state. Reduced motion freezes the renderer. The rendered heartbeat is decorative, never evidence of a successful task or a live connection. See `web/vendor/LICENSE` and `web/vendor/PROVENANCE.md`.
+
+The dashboard reads `/api/sessions` and `/api/runs` together and merges both histories using distinct session/run identities. An HTTP 404 on either list route allows use of the other API. V1 run selection reads `/api/events`. Those event lists are bounded at 200 records; replay scrubs received event indices rather than inventing missing history. Legacy history is loaded only on request from `/api/legacy` and displayed as plain JSON. An MCP-only server may reject that optional legacy route explicitly. Authentication and network failures are reported explicitly.
+
+All scripts/styles are same-origin external files and work with `script-src 'self'` and `style-src 'self'`. No credential URL parameters, browser storage, inline event handlers, remote assets or demonstration results are used.
+
+For browser validation, build assets first, then run `node tests/ui-browser.mjs` (or the root `test:browser` script). It launches Chromium at `PLAYWRIGHT_CHROMIUM_EXECUTABLE` or `/usr/bin/chromium` and creates an isolated local Worker/D1 instance with explicitly simulated records. Generated screenshots live under `.build/`.

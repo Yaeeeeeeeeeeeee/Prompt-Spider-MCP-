@@ -12,6 +12,11 @@ class SenderTests(unittest.TestCase):
     def setUp(self):
         import prompt_spider_sender as sender
         self.s = sender
+        self.state = tempfile.TemporaryDirectory()
+        self.env = patch.dict(os.environ, {'SPIDER_STATE_DIR':self.state.name})
+        self.env.start()
+        self.addCleanup(self.env.stop)
+        self.addCleanup(self.state.cleanup)
 
     def test_lifecycle_and_model_request_scope(self):
         cases = [('SessionStart', {'source':'startup'}, 'session_started'),
@@ -44,8 +49,12 @@ class SenderTests(unittest.TestCase):
             subprocess.run(['git','init','-q',str(root)],check=True)
             child=root/'src';child.mkdir()
             payload=self.s.make_payload({'hook_event_name':'UserPromptSubmit','cwd':str(child),'prompt':'DO NOT SEND','transcript_path':'secret','tool_input':{'command':'secret'}})
-            self.assertEqual(payload,{'event':'prompt_submitted','project':'project'})
-        self.assertEqual(set(payload),{'event','project'})
+            self.assertEqual(payload['event_type'],'prompt_submitted')
+            second=self.s.make_payload({'hook_event_name':'Stop','cwd':str(root)})
+            self.assertEqual(payload['project_id'],second['project_id'])
+            self.assertNotIn(str(root),json.dumps(payload))
+            self.assertNotIn('DO NOT SEND',json.dumps(payload))
+        self.assertEqual(set(payload),{'version','event_id','source','project_id','run_id','event_type','status','timestamp'})
 
     def test_transport_exact_body_and_header_no_redirect(self):
         class Response:
@@ -54,17 +63,17 @@ class SenderTests(unittest.TestCase):
             def __exit__(self,*a): pass
         class Opener:
             def open(inner, request, timeout):
-                self.assertEqual(json.loads(request.data),{'event':'turn_stopped','project':'demo'})
+                self.assertEqual(json.loads(request.data)['event_type'],'turn_stopped')
                 self.assertEqual(request.get_header('Authorization'),'Bearer dummy-unit-test')
                 self.assertLessEqual(timeout,1.5)
-                self.assertEqual(request.full_url,self.s.ENDPOINT)
+                self.assertEqual(request.full_url,'https://collector.example.invalid/api/events')
                 return Response()
-        with patch.dict(os.environ,{'SPIDER_INGEST_TOKEN':'dummy-unit-test'}), patch.object(self.s.urllib.request,'build_opener',return_value=Opener()):
-            self.assertEqual(self.s.send({'event':'turn_stopped','project':'demo'}),'accepted')
+        with patch.dict(os.environ,{'SPIDER_WINDOWS_TOKEN':'dummy-unit-test','SPIDER_ENDPOINT':'https://collector.example.invalid/api/events'}), patch.object(self.s.urllib.request,'build_opener',return_value=Opener()):
+            self.assertEqual(self.s.send(self.s.make_payload({'hook_event_name':'Stop'})),'accepted')
 
     def test_missing_token_and_network_errors_never_block(self):
-        with patch.dict(os.environ,{},clear=True):
-            self.assertEqual(self.s.send({'event':'turn_stopped','project':'demo'}),'missing_token')
+        with patch.dict(os.environ,{'SPIDER_STATE_DIR':self.state.name},clear=True):
+            self.assertEqual(self.s.send(self.s.make_payload({'hook_event_name':'Stop'})),'missing_token')
         for text in ['not JSON','[]','{}','{"hook_event_name":"Stop","cwd":null}']:
             out=io.StringIO()
             with patch('sys.stdin',io.StringIO(text)),contextlib.redirect_stdout(out),patch.object(self.s,'send',side_effect=OSError('secret-network-detail')):
@@ -73,14 +82,14 @@ class SenderTests(unittest.TestCase):
 
     def test_transport_failure_and_redirect_are_safe(self):
         import urllib.error
-        with patch.dict(os.environ, {'SPIDER_INGEST_TOKEN':'dummy-unit-test'}), patch.object(self.s.urllib.request,'build_opener',side_effect=urllib.error.URLError('offline')):
-            self.assertEqual(self.s.send({'event':'turn_stopped','project':'demo'}),'network_or_http_error')
+        with patch.dict(os.environ, {'SPIDER_WINDOWS_TOKEN':'dummy-unit-test','SPIDER_ENDPOINT':'https://collector.example.invalid/api/events'}), patch.object(self.s.urllib.request,'build_opener',side_effect=urllib.error.URLError('offline')):
+            self.assertEqual(self.s.send(self.s.make_payload({'hook_event_name':'Stop'})),'network_or_http_error')
         self.assertIsNone(self.s.NoRedirect().redirect_request(None,None,302,'redirect',{},'https://other.example/'))
 
     def test_dry_run_never_sends(self):
         out=io.StringIO()
         with patch('sys.stdin',io.StringIO('{"hook_event_name":"Stop"}')),contextlib.redirect_stdout(out),patch.object(self.s,'send',side_effect=AssertionError('unexpected network')):
             self.assertEqual(self.s.main(['--dry-run']),0)
-        self.assertEqual(json.loads(out.getvalue())['event'],'turn_stopped')
+        self.assertEqual(json.loads(out.getvalue())['event_type'],'turn_stopped')
 
 if __name__=='__main__': unittest.main()

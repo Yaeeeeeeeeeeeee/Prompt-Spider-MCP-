@@ -1,0 +1,16 @@
+node_modules/
+.wrangler/
+__pycache__/
+*.pyc
+.dev.vars*
+.env*
+!.env.example
+src/assets.generated.js
+private-backups/
+*.sqlite*
+*.db
+.wrangler.generated.*
+playwright-report/
+test-results/
+
+.build/

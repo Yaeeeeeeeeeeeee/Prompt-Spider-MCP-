@@ -1,0 +1,21 @@
+# Source evidence and scope
+
+## Original root-directory regression
+
+The supplied `prompt-spider-windows.zip` contains a sender whose `project_name` runs `git -C cwd rev-parse --show-toplevel` with `timeout=0.4`. It catches `OSError` and `SubprocessError`, including TimeoutExpired, and then uses cwd's basename. Thus a timeout from a nested `project/src` sends `src`. This mechanism is directly visible in the actual attachment, rather than a conclusion that every observed failure was a timeout. The untouched original function passes the real nested repository assertion on this Linux machine; tests separately force TimeoutExpired to reproduce its fallback. That assertion is retained, not changed to accept `src`.
+
+The new V1 sender and cloud transport walk resolved ancestors for the nearest `.git` directory or file without spawning Git or following a gitdir target. Tests cover nested cwd, worktree file, nested submodule file, and stable opaque project IDs. A marker is a repository boundary; they do not validate repository health. For a non-Git project the fallback remains cwd, so different subdirectories cannot automatically be correlated without a repository marker.
+
+## Official Codex evidence
+
+Checked local official-source snapshot under `/tmp/prompt-spider-official/codex-main` on 2026-11-06: `codex-rs/protocol/src/hooks.rs` declares `commandWindows` (alias command_windows), timeout, and async fields. Source URL: https://github.com/openai/codex/blob/main/codex-rs/protocol/src/hooks.rs . The snapshot is partial and has no Git metadata; an exact upstream revision is not established. main is mutable and current source is not proof of capabilities in a user's installed release.
+
+The installer quotes both Python and sender paths in commandWindows and rejects percent/exclamation/quote/newline expansion characters. The available official archive also includes `codex-rs/hooks/src/engine/command_runner.rs`: lines455–467 select COMSPEC /C and add an outer quote pair via raw_arg around commandWindows; quoting the inner Python and script paths matches that source behavior. This is a source audit, not Windows execution. Actual Windows execution, trust review, and registry behavior were not exercised on this Linux host. The additional archive has no immutable Git metadata; its shell/approval excerpts are local source evidence, not proof of the installed Windows release. Installation preserves existing handlers and never auto-trusts them. Official configuration/execution docs in this snapshot provide no evidence for a universal Codex Cloud user lifecycle-hook installation; cloud reporting remains explicit project opt-in, with availability dependent on each environment.
+
+## Upstream visualization and MCP
+
+Verified local Git checkout remote `https://github.com/Kirito14IT/prompt-spider-ui`, revision `24a5db96fff2579baaa6fefce7d7051a929a8d57`; MIT copyright (c) 2026 Kirito14IT. See [vendored provenance](../vendor/prompt-spider-ui/UPSTREAM.md) and [license](../vendor/prompt-spider-ui/LICENSE). Distribution includes the complete app, required shared lib, root server/package, original local STDIO MCP server/hub/exporter and pinned package lock. No videos, node_modules, private exports, or credentials are included.
+
+Upstream registers eleven tools: spider_create_session, spider_get_session, spider_list_sessions, spider_close_session, spider_update_events, spider_complete_session, spider_configure_session, spider_control_playback, spider_export_session, spider_import_session, spider_export_project. It also exposes spider://guide, spider://config, and a reporting prompt. These are explicit agent reports and controls, not automatic instrumentation or private reasoning capture. The final target retains this scope through the independent remote `/mcp` Streamable HTTP Worker; the original local STDIO process remains a fallback. Filesystem exports in local upstream and cloud downloadable exports have different delivery mechanisms; consult [remote MCP documentation](mcp.md).
+
+Legacy event ingestion and V1 collector event ingestion are separate from the eleven session tools. The existing production prompt-spider-api is retained. This research made no production writes and proves neither Windows installation nor automatic cloud reporting.

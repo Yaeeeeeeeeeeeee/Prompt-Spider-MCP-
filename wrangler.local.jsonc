@@ -1,0 +1,8 @@
+{
+  "name": "prompt-spider-v1-local",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [{"binding": "DB", "database_name": "prompt-spider-v1-local", "database_id": "00000000-0000-0000-0000-000000000001", "migrations_dir": "migrations"}],
+  "vars": {"RUN_DISCONNECTED_SECONDS": "120", "RUN_TIMEOUT_SECONDS": "900"}
+}
