@@ -206,7 +206,7 @@ def backup(path):
     inspected_schema = check_schema()
     directory = private_dir(path, True)
     prefix = f'/accounts/{account}/workers/scripts/prompt-spider-api'
-    save(directory, 'worker-content.bin', api(prefix + '/content', raw=True))
+    save(directory, 'worker-content.bin', api(prefix + '/content/v2', raw=True))
     save(directory, 'worker-settings.json', api(prefix + '/settings'))
     deployments = api(prefix + '/deployments')
     save(directory, 'worker-deployments.json', deployments)

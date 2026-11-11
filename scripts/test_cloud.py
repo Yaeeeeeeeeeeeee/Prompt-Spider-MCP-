@@ -14,6 +14,18 @@ class Guards(unittest.TestCase):
  def test_independent_token(self):
   with patch.dict(os.environ,{'MCP_AUTH_TOKEN':'same','SPIDER_READ_TOKEN':'same'},clear=True):
    with self.assertRaises(ValueError): cloud.credentials()
+ def test_worker_backup_uses_supported_source_download_route(self):
+  import tempfile
+  calls=[]
+  class StopAfterSource(Exception): pass
+  def request(path,*args,**kwargs):
+   calls.append(path)
+   raise StopAfterSource()
+  with tempfile.TemporaryDirectory() as directory:
+   target=Path(directory)/'private'
+   with patch.object(cloud,'identity',return_value=('a','b','prompt-spider-mcp')), patch.object(cloud,'check_schema',return_value=[]), patch.object(cloud,'api',side_effect=request):
+    with self.assertRaises(StopAfterSource): cloud.backup(target)
+  self.assertEqual(calls[0],'/accounts/a/workers/scripts/prompt-spider-api/content/v2')
  def test_short_new_credentials_rejected(self):
   with patch.dict(os.environ,{'MCP_AUTH_TOKEN':'short','SPIDER_READ_TOKEN':'r'*32},clear=True):
    with self.assertRaises(ValueError): cloud.credentials()

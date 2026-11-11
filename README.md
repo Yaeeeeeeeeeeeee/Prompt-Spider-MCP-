@@ -2,7 +2,7 @@
 
 独立的 Cloudflare Workers **远程 MCP Server**，使用官方 SDK 的 HTTPS / MCP Streamable HTTP，与原版蜘蛛可视化和 D1 持久会话集成。
 
-**当前交付状态：源码、本地集成验证和部署工具已完成；尚未部署到你的 Cloudflare。** 当前环境没有 Cloudflare 管理凭据，生产 `/health` 访问也被出站策略以 CONNECT 403 拒绝。没有读取或修改生产 D1，没有备份或部署成功的声明。以下 URL 都是部署后的配置形式，不是现已上线地址。
+**当前交付状态：源码、本地集成验证和部署工具已完成；尚未部署到你的 Cloudflare。** 2026-11-11 已在新发布环境验证六个变量均存在、Cloudflare Token有效、D1身份/绑定匹配、原健康接口HTTP200且原历史2条。Worker已私有备份，但官方D1导出下载主机未放行，完整备份尚未完成，因此未迁移或部署。详见[本次真实生产检查](docs/production-resume-2026-11-11.md)。以下 URL 都是部署后的配置形式，不是现已上线地址。
 
 ## 架构与已有资源
 
