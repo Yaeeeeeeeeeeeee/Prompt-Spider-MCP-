@@ -1,3 +1,5 @@
+Latest actual deployment and safe rollback version: [production report](production-deployment-2026-11-11.md). The original preparation instructions below remain reusable.
+
 # Independent remote MCP deployment
 
 The new service is **prompt-spider-mcp**, with HTTPS Streamable HTTP at `/mcp`. The existing **prompt-spider-api** service is backed up and is never deployed or rolled back by this runner. Both use the existing **prompt-spider-db**, binding `DB`. The original `events` table is retained. No database ID is invented or committed.

@@ -2,7 +2,7 @@
 
 独立的 Cloudflare Workers **远程 MCP Server**，使用官方 SDK 的 HTTPS / MCP Streamable HTTP，与原版蜘蛛可视化和 D1 持久会话集成。
 
-**当前交付状态：源码、本地集成验证和部署工具已完成；尚未部署到你的 Cloudflare。** 2026-11-11 已在新发布环境验证六个变量均存在、Cloudflare Token有效、D1身份/绑定匹配、原健康接口HTTP200且原历史2条。Worker已私有备份，但官方D1导出下载主机未放行，完整备份尚未完成，因此未迁移或部署。详见[本次真实生产检查](docs/production-resume-2026-11-11.md)。以下 URL 都是部署后的配置形式，不是现已上线地址。
+**当前交付状态：独立远程 MCP 已生产部署。** [仪表盘](https://prompt-spider-mcp.tohsakarin2018.workers.dev/) · [MCP入口](https://prompt-spider-mcp.tohsakarin2018.workers.dev/mcp) · [完整部署/备份/回滚报告](docs/production-deployment-2026-11-11.md)。2026-11-11 的全新官方 D1 备份和隔离恢复、全部部署前检查、41项真实生产SDK验收及17项可控版本回滚检查均通过。原生产Worker及原2条事件记录保留。当前已启用独立Bearer鉴权；ChatGPT OAuth仍待准确回调和独立批准凭据，不能把SDK通过等同于真实ChatGPT登录通过。
 
 ## 架构与已有资源
 
@@ -76,6 +76,6 @@ npm run dev
 - [可选两端采集器](docs/collectors.md)
 - [实际测试及未完成事项](docs/validation.md)
 
-生产前真正需要的最少外部条件：安全提供 Cloudflare API 权限、账号/D1 标识；允许 Cloudflare API、原/新 Worker 域名与 D1 私有导出下载目标的出站访问；在安全环境配置新的独立 MCP/看板凭据。若要 ChatGPT OAuth，再配置实际连接器的精确回调地址和独立批准凭据。不要在聊天中提供 Secret 明文。
+已配置并验证 Cloudflare 管理权限、账号/D1 标识、四个必要域名及独立 MCP/看板凭据。当前剩余客户端事项：在客户端安全配置同一个 MCP_AUTH_TOKEN；看板使用 SPIDER_READ_TOKEN。若要 ChatGPT OAuth，再配置实际连接器的精确回调地址和独立批准凭据。不要在聊天中提供 Secret 明文。
 
 回滚只回滚新 MCP Worker 版本，保留原 Worker、旧事件和新增数据；首次发布若无旧版本，只在显式参数、部署收据与目标检查通过时停用新 Worker。数据库恢复是另行计划的灾难恢复操作，不能覆盖发布后新数据。私有备份在仓库外保存，不进入 Git。
