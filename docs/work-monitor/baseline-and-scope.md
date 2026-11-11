@@ -17,7 +17,7 @@ The official Help URL fetch currently returns proxy CONNECT403, HTTP000. The env
 
 `tools/local-audit/audit.mjs` is a dependency-free Node audit for the actual local directory. It reads sanitized remotes, actual branch/full commit, tracked/untracked status, source diff statistics and working-source SHA256s. It does not fetch/pull, install packages, modify source/index/refs, or read/export task history, .env values or source contents. Remote URL userinfo/query/fragment are stripped before output.
 
-`node tools/local-audit/audit.test.mjs` executes2 tests: credential-safe remote parsing; actual clean/modified Git fixture metadata plus index/source/ref preservation and no source/environment-value disclosure. These are audit-tool tests, not Work monitoring acceptance.
+`node tools/local-audit/audit.test.mjs` executes3 tests: credential-safe remote parsing; actual modified Git fixture metadata plus index/source/ref preservation and no source/environment-value disclosure; honest ZIP/non-Git checkout reporting and secret-file exclusion. These are audit-tool tests, not Work monitoring acceptance.
 
 ## Required evidence before applying an upgrade
 

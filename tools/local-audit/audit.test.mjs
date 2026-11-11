@@ -24,3 +24,10 @@ test('audits true metadata and modified source without changing files or dumping
   assert.throws(()=>audit(join(root,'mcp')),/not its actual Git root/);
  }finally{rmSync(root,{recursive:true,force:true});}
 });
+test('ZIP checkout honestly reports unavailable Git metadata and hashes only allowed source',()=>{
+ const root=mkdtempSync(join(tmpdir(),'spider-no-git-'));
+ try {
+  mkdirSync(join(root,'mcp'));writeFileSync(join(root,'mcp/server.mjs'),'// SOURCE_ONLY\n');writeFileSync(join(root,'mcp/secrets.json'),'{"token":"PRIVATE_FILE_VALUE"}');
+  const result=audit(root);assert.equal(result.is_git_checkout,false);assert.equal(result.head,null);assert.equal(result.branch,null);assert.equal(result.worktree_clean,null);assert.ok(result.source_files.find(x=>x.path==='mcp/server.mjs'));assert.ok(!result.source_files.find(x=>x.path==='mcp/secrets.json'));assert.ok(!JSON.stringify(result).includes('PRIVATE_FILE_VALUE'));
+ }finally{rmSync(root,{recursive:true,force:true});}
+});
